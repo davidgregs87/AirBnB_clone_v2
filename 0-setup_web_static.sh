@@ -58,11 +58,15 @@ sudo chown -R ubuntu:ubuntu /data/
 
 # Re-configure our server with alias
 echo "server {
-    listen [:]80;
-    listen [::]:80;
-    alias /data/web_static/current;
-    index index.html;
+    listen 80 default_server;
+    listen [::]:80 default_sever;
+    root /var/www/html;
+    index index.html index.htm;
+    location / {
+        try_files \$uri \$uri/ =404;
+    }
     location /hbnb_static {
+        alias /data/web_static/current;
         try_files \$uri \$uri/ =404;
     }
 }" > default
