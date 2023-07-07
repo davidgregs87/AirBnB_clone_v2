@@ -69,5 +69,8 @@ echo "server {
 
 sudo mv -f default /etc/nginx/sites-available/default
 
+# Restart nginx
+sudo service nginx restart
+
 # Exit program
 exit 0
