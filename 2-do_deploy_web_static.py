@@ -22,19 +22,20 @@ def do_deploy(archive_path):
         xfile_name = file_name.split('.')[0]
         file_path = '/data/web_static/releases/' + xfile_name
         # create archive folder
-        sudo('mkdir -p {}'.format(file_path))
+        run('mkdir -p {}'.format(file_path))
         # uncompress the archive to the folder file_name
-        sudo('tar -xzf /tmp/{} -C {}'.format(file_name, file_path))
+        run('tar -xzf /tmp/{} -C {}'.format(file_name, file_path))
         # delete the uploaded archive
-        sudo('rm /tmp/{}'.format(file_name))
+        run('rm /tmp/{}'.format(file_name))
         # move files
-        sudo('mv {}/web_static/* {}'.format(file_path, file_path))
+        run('mv {}/web_static/* {}'.format(file_path, file_path))
         # delete folder
-        sudo('rm -rf {}/web_static/'.format(file_path))
+        run('rm -rf {}/web_static/'.format(file_path))
         # delete symbolic link from webserver
-        sudo('rm -rf /data/web_static/current')
+        run('rm -rf /data/web_static/current')
         # create sym link
-        sudo('ln -s {} /data/web_static/current'.format(file_path))
+        run('ln -s {} /data/web_static/current'.format(file_path))
+        print('New version deployed!')
         return True
     else:
-        return 	False
+        return False
