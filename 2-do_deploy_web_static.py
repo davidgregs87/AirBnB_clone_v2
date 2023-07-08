@@ -37,4 +37,4 @@ def do_deploy(archive_path):
         sudo('ln -s {} /data/web_static/current'.format(file_path))
         return True
     else:
-        return false
+        return 	False
