@@ -15,9 +15,9 @@ def do_pack():
 
     extract = local('tar -cvzf versions/{} web_static/'.format(archive_path))
     if extract.succeeded:
-        path = 'versions/{}'.format(archive_path)
-        size = os.path.getsize('versions/{}'.format(archive_path))
-        print('web_static packed: {} -> {}Bytes'.format(archive_path, size))
-        return path
+        full_path = 'versions/{}'.format(archive_path)
+        size = os.path.getsize(full_path)
+        print('web_static packed: {} -> {}Bytes'.format(full_path, size))
+        return full_path
     else:
         return None
