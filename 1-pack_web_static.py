@@ -1,20 +1,22 @@
 #!/usr/bin/python3
-""" A python script to archive the html folder """
-from fabric.api import *
+# Fabfile to generates a .tgz archive from the contents of web_static.
+import os.path
 from datetime import datetime
-import os
+from fabric.api import local
 
 
 def do_pack():
-    """pack up all our files into an archive"""
-    date = datetime.strftime(datetime.now(), '%Y%m%d%H%M%S')
-    archive_path = 'versions/web_static_{}.tgz'.format(date)
-    print('Packing web_static to {}'.format(archive_path))
-    if os.path.exists(archive_path) is True:
-        return True
-    local('mkdir versions')
-    extract = local('tar -cvzf {} web_static'.format(archive_path))
-    if extract.failed:
-        return archive_path
-    size = os.path.getsize(archive_path)
-    print('web_static packed: {} -> {}Bytes'.format(archive_path, size))
+    """Create a tar gzipped archive of the directory web_static."""
+    dt = datetime.utcnow()
+    file = "versions/web_static_{}{}{}{}{}{}.tgz".format(dt.year,
+                                                         dt.month,
+                                                         dt.day,
+                                                         dt.hour,
+                                                         dt.minute,
+                                                         dt.second)
+    if os.path.isdir("versions") is False:
+        if local("mkdir -p versions").failed is True:
+            return None
+    if local("tar -cvzf {} web_static".format(file)).failed is True:
+        return None
+    return file
