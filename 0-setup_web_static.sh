@@ -62,13 +62,21 @@ echo "server {
     listen [::]:80 default_server;
     root /var/www/html;
     index index.html index.htm;
-    location / {
-        try_files \$uri \$uri/ =404;
-    }
     location /hbnb_static {
         alias /data/web_static/current;
-        try_files \$uri \$uri/ =404;
+        index index.html index.htm;
     }
+
+    location /redirect_me {
+	return 301 https://stackoverflow.com/;
+    }
+    
+    error_page 404 /404.html;
+    location = /404.html {
+	root /var/www/html;
+	internal;
+    }
+    add_header X-Served-By \$hostname;
 }" > default
 
 sudo mv -f default /etc/nginx/sites-available/default
