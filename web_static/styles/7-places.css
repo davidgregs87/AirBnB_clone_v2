@@ -1,32 +1,40 @@
 .places {
-	display: block;
-	margin: 45px auto;
-	text-align: center;
+    max-height: 300px;
+    max-width: 900px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    font-weight: 600;
+    font-size: 20px;
+}
+.tiny {
+    width: 300px;
+    border: 1px solid #ff5a5f;
+    margin-top: 35px;
+    text-align: center;
+    padding-top: 20px;
+    border-radius: 4px;
+    height: 50px;
+    margin-right: 60px;
+}
+.home {
+    width: 300px;
+    border: 1px solid #ff5a5f;
+    margin-top: 35px;
+    text-align: center;
+    padding-top: 20px;
+    border-radius: 4px;
+    height: 50px;
+    margin-right: 60px;
+}
+.suite {
+    flex: 0 0 calc(43.33% - 40px);
+    border: 1px solid #ff5a5f;
+    height: 60px;
+    text-align: center;
+    padding-top: 10px;
+    border-radius: 4px;
+    margin-top: 20px;
 }
 
-article {
-	display: inline-block;
-	width: 390px;
-	padding: 20px;
-	margin: 20px;
-	border: 1px solid #FF5A5F;
-	border-radius: 4px;
-	text-align: center;
-}
 
-h1 {
-	float: left;
-	text-align: left;
-	width: 95%;
-	display: block;
-	margin-top: 0px;
-	margin-left: 20px;
-	margin-bottom: 5px;
-	font-size: 30px;
-}
-
-article h2 {
-	font-size: 30px;
-	padding: 0px;
-	margin: auto;
-}
