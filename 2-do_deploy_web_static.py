@@ -1,49 +1,52 @@
 #!/usr/bin/python3
-# Fabfile to distribute an archive to a web server.
-import os.path
-from fabric.api import env
-from fabric.api import put
-from fabric.api import run
+"""
+A fabric scipt that generates a .tgz archive file from my web_static folder
+"""
+from fabric.api import *
+from datetime import datetime
+import os
 
-env.hosts = ["100.26.133.155", "35.175.63.49"]
+
+env.hosts = ['100.26.133.155', '35.175.63.49']
 
 
 def do_deploy(archive_path):
-    """Distributes an archive to a web server.
-
-    Args:
-        archive_path (str): The path of the archive to distribute.
-    Returns:
-        If the file doesn't exist at archive_path or an error occurs - False.
-        Otherwise - True.
-    """
-    if os.path.isfile(archive_path) is False:
+    """ Deploy archives """
+    if os.path.isfile(archive_path):
+        # upload the archive to the /tmp/ directory of the webserver
+        put(archive_path, '/tmp/')
+    else:
         return False
-    file = archive_path.split("/")[-1]
-    name = file.split(".")[0]
-
-    if put(archive_path, "/tmp/{}".format(file)).failed is True:
-        return False
-    if run("rm -rf /data/web_static/releases/{}/".
-           format(name)).failed is True:
-        return False
-    if run("mkdir -p /data/web_static/releases/{}/".
-           format(name)).failed is True:
-        return False
-    if run("tar -xzf /tmp/{} -C /data/web_static/releases/{}/".
-           format(file, name)).failed is True:
-        return False
-    if run("rm /tmp/{}".format(file)).failed is True:
-        return False
-    if run("mv /data/web_static/releases/{}/web_static/* "
-           "/data/web_static/releases/{}/".format(name, name)).failed is True:
-        return False
-    if run("rm -rf /data/web_static/releases/{}/web_static".
-           format(name)).failed is True:
-        return False
-    if run("rm -rf /data/web_static/current").failed is True:
-        return False
-    if run("ln -s /data/web_static/releases/{}/ /data/web_static/current".
-           format(name)).failed is True:
-        return False
-    return True
+    # get the name of the file with .tgz
+    file_name = archive_path.split('/')[-1]
+    # get name without .tgz
+    xfile_name = file_name.split('.')[0]
+    file_path = '/data/web_static/releases/' + xfile_name
+    # create archive folder
+    if run('mkdir -p {}'.format(file_path)):
+        return True
+    False    # uncompress the archive to the folder file_name
+    if run('tar -xzf /tmp/{} -C {}'.format(file_name, file_path)):
+        return True
+    False
+    # delete the uploaded archive
+    if run('rm /tmp/{}'.format(file_name)):
+        return True
+    False
+    # move files
+    if run('mv {}/web_static/* {}'.format(file_path, file_path)):
+        return True
+    False
+    # delete folder
+    if run('rm -rf {}/web_static/'.format(file_path)):
+        return True
+    False
+    # delete symbolic link from webserver
+    if run('rm -rf /data/web_static/current'):
+        return True
+    False
+    # create sym link
+    if run('ln -s {} /data/web_static/current'.format(file_path)):
+        return True
+    False
+    print('New version deployed!')
