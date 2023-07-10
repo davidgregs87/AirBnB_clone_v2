@@ -1,14 +1,29 @@
 #!/usr/bin/python3
-'''module:
-deploy a web static archive to web servers
-'''
-
-from fabric.api import env, put, run
-from os.path import exists, isfile
+""" A python script to archive the html folder """
+from fabric.api import *
+from datetime import datetime
 import os
-import argparse
 
 env.hosts = ['100.26.133.155', '35.175.63.49']
+
+
+def do_pack():
+    """pack up all our files into an archive"""
+    if os.path.exists('versions'):
+        pass
+    else:
+        local('mkdir versions')
+    date = datetime.strftime(datetime.now(), '%Y%m%d%H%M%S')
+    file_path = 'versions/web_static_{}.tgz'.format(date)
+    print('Packing web_static to {}'.format(file_path))
+    result = local('tar -cvzf {} web_static/'.format(file_path))
+    if result.failed:
+        return None
+    else:
+        size = os.path.getsize(file_path)
+        print('web_static packed: {} -> {}Bytes'.format(file_path, size))
+        return file_path
+
 
 
 def do_deploy(archive_path):
@@ -16,7 +31,7 @@ def do_deploy(archive_path):
     distributes an archive to your web servers
     '''
 
-    if not exists(archive_path) and not isfile(archive_path):
+    if not os.path.exists(archive_path) and not os.path.isfile(archive_path):
         return False
 
     try:
@@ -46,20 +61,9 @@ def do_deploy(archive_path):
         return False
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('archive_path', type=str,
-                        help='path to the archive file')
-    parser.add_argument('-u', '--username', type=str,
-                        help='SSH username')
-    parser.add_argument('-i', '--private-key', type=str,
-                        help='Path to SSH private key')
-    args = parser.parse_args()
-
-    if args.username:
-        env.user = args.username
-
-    if args.private_key:
-        env.key_filename = args.private_key
-
-    do_deploy(args.archive_path)
+def deploy():
+    """A script that creates and distributes an archive to your web servers, using the function deploy:"""
+    archive_path = do_pack()
+    if archive_path is None:
+        return False
+    return do_deploy(archive_path)
