@@ -40,12 +40,10 @@ def Hbnb_3(text):
     return f'Python {text}'
 
 
-@app.route("/number/<n>", strict_slashes=False)
+@app.route("/number/<int:n>", strict_slashes=False)
 def Hbnb4(n):
     """display “n is a number” only if n is an integer"""
-    int_n = int(n)
-    if isinstance(int_n, int):
-        return f'{int_n} is a number'
+    return f'{n} is a number'
 
 
 if __name__ == '__main__':
