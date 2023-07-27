@@ -19,7 +19,7 @@ password = getenv("HBNB_MYSQL_PWD")
 hbnb_env = getenv("HBNB_ENV")
 
 classes = {"State": State, "City": City, "User": User,
-           "Place": Place, "Review": Review, "Amenity": Amenity}
+           "Place": Place, "Review": Review, "Amenity": Amenity, "BaseModel": BaseModel}
 
 
 class DBStorage:
@@ -43,25 +43,23 @@ class DBStorage:
         Returns:
             dictionary of objects
         """
-        dbobjects = {}
+        objects = {}
         if cls:
-            if type(cls) is str and cls in classes:
-                for obj in self.__session.query(classes[cls]).all():
-                    key = str(obj.__class__.__name__) + "." + str(obj.id)
-                    val = obj
-                    dbobjects[key] = val
-            elif cls.__name__ in classes:
-                for obj in self.__session.query(cls).all():
-                    key = str(obj.__class__.__name__) + "." + str(obj.id)
-                    val = obj
-                    dbobjects[key] = val
+            if isinstance(cls, str) and cls in classes:
+                cls = eval(cls)
+            if cls in classes.values():
+                objs = self.__session.query(cls).all()
+                for obj in objs:
+                    key = f'{type(obj).__name__}.{obj.id}'
+                    objects[key] = obj
         else:
-            for k, v in classes.items():
-                for obj in self.__session.query(v).all():
-                    key = str(v.__name__) + "." + str(obj.id)
-                    val = obj
-                    dbobjects[key] = val
-        return dbobjects
+            for cls in classes.values():
+                objs = self.__session.query(cls).all()
+                for obj in objs:
+                    key = f'{type(obj).__name__}.{obj.id}'
+                    objects[key] = obj
+        return objects
+       
 
     def new(self, obj):
         """

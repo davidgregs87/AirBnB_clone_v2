@@ -1,24 +1,29 @@
 #!/usr/bin/python3
-'''
-    Implementation of the Amenity class
-'''
-from models.base_model import BaseModel, Base
-from sqlalchemy import Column, String, ForeignKey, Table
-from sqlalchemy.orm import relationship
-from os import getenv
+""" Amenity Module for HBNB project """
 
-storage_type = getenv("HBNB_TYPE_STORAGE")
+from os import getenv
+from models.base_model import BaseModel, Base
+import sqlalchemy
+from sqlalchemy import Table, Column, String, ForeignKey
+from sqlalchemy.orm import relationship
 
 
 class Amenity(BaseModel, Base):
-    '''
-        Implementation for the Amenities.
+    '''class for amenity:
+    like services eg WIFI
     '''
     __tablename__ = 'amenities'
-    if storage_type == 'db':
-        from models.place import place_amenity
+
+    name = Column(String(128), nullable=False)
+
+    if getenv('HBNB_TYPE_STORAGE') == 'db':
+        __tablename__ = 'amenities'
         name = Column(String(128), nullable=False)
-        place_amenities = relationship("Place", secondary=place_amenity,
-                                       back_populates="amenities")
+        # set default charset to match the db dump charset:
+        __table_args__ = {'mysql_default_charset': 'latin1'}
     else:
-        name = ""
+        name = ''
+
+    def __init__(self, *args, **kwargs):
+        """initializes Amenity"""
+        super().__init__(*args, **kwargs)

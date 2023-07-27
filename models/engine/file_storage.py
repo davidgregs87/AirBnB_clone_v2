@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """This module defines a class to manage file storage for hbnb clone"""
 import json
+from models.base_model import BaseModel
 
 
 class FileStorage:
@@ -64,3 +65,8 @@ class FileStorage:
         if obj is not None:
             key = obj.__class__.__name__ + '.' + obj.id
             del FileStorage.__objects[key]
+
+    def close(self):
+        """Add a public method def close(self):: call reload()
+        method for deserializing the JSON file to objects"""
+        self.reload()

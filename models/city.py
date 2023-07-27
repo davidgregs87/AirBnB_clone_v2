@@ -1,26 +1,27 @@
-#!/usr/bin/python3
-'''
-    Define the class City.
-'''
+''' City Module for HBNB project '''
+
+from os import getenv
 from models.base_model import BaseModel, Base
+from models.place import Place
 from sqlalchemy import Column, String, ForeignKey
 from sqlalchemy.orm import relationship
-fr
-from os import getenv
-
-
-storage_type = getenv("HBNB_TYPE_STORAGE")
 
 
 class City(BaseModel, Base):
-    '''
-        Define the class City that inherits from BaseModel.
-    '''
+    '''the city class:
+    contains state ID and name'''
     __tablename__ = 'cities'
-    if storage_type == 'db':
+    if getenv('HBNB_TYPE_STORAGE') == 'db':
         name = Column(String(128), nullable=False)
         state_id = Column(String(60), ForeignKey('states.id'), nullable=False)
-        places = relationship("Place", backref="cities", cascade="all, delete-orphan")
+        places = relationship('Place', cascade='all, delete', backref='cities',
+                              passive_deletes=True)
+        # set default charset to match the db dump charset:
+        __table_args__ = {'mysql_default_charset': 'latin1'}
     else:
-        name = ""
         state_id = ""
+        name = ""
+
+    def __init__(self, *args, **kwargs):
+        """initializes city"""
+        super().__init__(*args, **kwargs)
