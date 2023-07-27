@@ -4,10 +4,16 @@
         <TITLE>HBNB</TITLE>
     </HEAD>
     <BODY>
-        <H1>States</H1>
+        <H1>Places</H1>
         <UL>
             {% for elem in states|sort(attribute='name') %}
             <LI>{{ elem.id }}: <B>{{ elem.name }}</B></LI>
+            {% endfor %}
+        </UL>
+        <H1>Cities</H1>
+        <UL>
+            {% for elem in cities|sort(attribute='name') %}
+            <LI>{{ elem.id }}: <B>{{ elem.name }}</B>:  <B>{{ elem.created_at }}</B></LI>
             {% endfor %}
         </UL>
     </BODY>
